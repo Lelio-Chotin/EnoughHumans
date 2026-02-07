@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="./sprites/LogoEnough.ico">
+    <title>Enough Humans™</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="homeView" class="container">
+    <div class="top">
+        <div class="left">
+            <div class="text">
+                <h1>Enough Humans<span>™</span></h1>
+                <p>À un moment, le nombre fait la différence, non?</p>
+            </div>
+        </div>
+        <div class="simu"></div>
+    </div>
+    <div class="bottom">
+        <div class="carousel-container">
+            <nav class="carousel">
+                <a href="?combat=sandbox" class="simulation sandbox-card">
+                    <div class="card-img"></div>
+                    <span>Bac à Sable</span>
+                </a>
+                <a href="?combat=1" class="simulation">
+                    <div class="card-img"></div>
+                    <span>Seuil de Saturation</span>
+                </a>
+                <a href="?combat=2" class="simulation">
+                    <div class="card-img"></div>
+                    <span>La Loi de la Meute</span>
+                </a>
+                <a href="?combat=3" class="simulation">
+                    <div class="card-img"></div>
+                    <span>Anomalie de Masse</span>
+                </a>
+                <a href="?combat=4" class="simulation">
+                    <div class="card-img"></div>
+                    <span>Avantage Mécanique</span>
+                </a>
+                <a href="?combat=5" class="simulation">
+                    <div class="card-img"></div>
+                    <span>Facteur Chaos</span>
+                </a>
+                <a href="?combat=6" class="simulation">
+                    <div class="card-img"></div>
+                    <span>Spécialisation Critique</span>
+                </a>
+                <a href="?combat=7" class="simulation">
+                    <div class="card-img"></div>
+                    <span>Supériorité Tactique</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div id="simuView" class="sim-page" style="display:none;">
+    <div class="ui" id="ui">
+        <button onclick="window.location.href='index.html'" class="btn-back">←</button>
+        <h2 id="scenarioName">Simulateur</h2>
+        <div id="sandboxUI" style="display:none;">
+            <div class="control-group">
+                <label>Team A</label>
+                <select id="selectA"></select>
+                <input type="number" id="inputA" value="1">
+            </div>
+            <div class="control-group">
+                <label>Team B</label>
+                <select id="selectB"></select>
+                <input type="number" id="inputB" value="10">
+            </div>
+        </div>
+        <div class="controls-bottom-left">
+            <div class="control-group-mini">
+                <label>Vitesse :</label>
+                <button id="cycleSpeed" class="btn-cycle" onclick="cycleSpeed()">x1</button>
+            </div>
+            <div class="control-group-mini">
+                <label>Zoom :</label>
+                <button id="cycleZoom" class="btn-cycle" onclick="cycleZoom()">x1</button>
+            </div>
+        </div>
+        <div class="main-actions">
+            <button id="playPause" onclick="togglePlay()">LANCER</button>
+            <button onclick="resetSimulation()">RESET</button>
+        </div>
+        <div class="stats">
+            A: <span id="countA">0</span> | B: <span id="countB">0</span>
+        </div>
+
+        <button class="btn-info" onclick="toggleInfoModal()">i</button>
+
+        <div id="infoModal" class="hidden-modal" onclick="toggleInfoModal(event)">
+            <div class="info-content" onclick="event.stopPropagation()">
+                <button class="btn-close-info" onclick="toggleInfoModal(event)">×</button>
+                <h2 id="infoTitle">Informations</h2>
+                <div id="infoBody"></div>
+            </div>
+        </div>
+    </div>
+    <div id="gameArea">
+        <div id="gameCanvas"></div>
+        <div id="winModal" class="hidden">
+            <div class="win-content">
+                <h1 id="winTitle"></h1>
+                <div class="win-stats">
+                    <span id="winSurvivors"></span>
+                    <span id="winTime"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="combats.js"></script>
+<script src="app.js"></script>
+<script src="carouselHomeMade.js"></script>
+</body>
+</html>
