@@ -164,6 +164,10 @@ class Entity {
         return {x: this.x + this.w / 2, y: this.y + this.h / 2};
     }
 
+    get radius() {
+        return Math.max(this.w, this.h) * 0.4;
+    }
+
     update(dt, areaW, areaH) {
         const frameFactor = dt * 60;
 
@@ -282,6 +286,24 @@ function resolveCollisions(entities) {
                 const minDist = (a.w + b.w) * 0.35;
 
                 if (dist < minDist && dist > 0) {
+                    const sizeA = (a.w + a.h) / 2;
+                    const sizeB = (b.w + b.h) / 2;
+                    const sizeRatio = Math.min(sizeA, sizeB) / Math.max(sizeA, sizeB);
+
+                    if (sizeRatio < 0.75) {
+                        const smaller = sizeA < sizeB ? a : b;
+                        const bigger = sizeA < sizeB ? b : a;
+
+                        const slideForce = 0.15;
+                        const overlap = minDist - dist;
+                        const nx = (smaller.center.x - bigger.center.x) / dist;
+                        const ny = (smaller.center.y - bigger.center.y) / dist;
+
+                        smaller.x += nx * overlap * slideForce;
+                        smaller.y += ny * overlap * slideForce;
+                        continue;
+                    }
+
                     const overlap = minDist - dist;
                     const nx = dx / dist;
                     const ny = dy / dist;
