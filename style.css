@@ -25,7 +25,7 @@ body {
 
 .container {
     height: 100vh;
-    max-height: 200dvh;
+    max-height: 100dvh;
     width: 100%;
     overflow: hidden;
 }
@@ -72,18 +72,12 @@ body {
     position: absolute;
 }
 
-.entity.visible {
-    opacity: 1 !important;
-    scale: 1;
-    pointer-events: auto;
-}
-
 .container .top .left .text {
     max-width: 70%;
 }
 
 .container .top .left h1 {
-    font-size: 6rem;
+    font-size: 5.25vw;
     font-weight: 900;
     line-height: 100%;
     text-transform: uppercase;
@@ -96,15 +90,18 @@ body {
 }
 
 .container .top .left p {
-    font-size: 1.2rem;
+    font-size: 1.1vw;
     opacity: 0.7;
 }
 
 .container .bottom {
     width: 100%;
-    padding: 2.5rem 0;
+    height: 30vh;
     background: var(--dark-black);
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .carousel-container {
@@ -395,13 +392,13 @@ h2#scenarioName {
     width: calc(100% - 6rem);
     height: calc(100% - 6rem);
     border-radius: 15px;
-    overflow: hidden;
     cursor: grab;
 }
 
 #gameArea:active {
     cursor: grabbing;
 }
+
 
 #gameCanvas, #homeCanvas {
     width: 100%;
@@ -411,9 +408,9 @@ h2#scenarioName {
     background-image: var(--dotted);
     background-size: 35px 35px;
     transform-origin: center center;
+    border-radius: 15px;
     display: block;
 }
-
 #winModal {
     position: absolute;
     top: 0;
@@ -482,9 +479,9 @@ h2#scenarioName {
 }
 
 .entity.visible {
-    opacity: 1;
-    pointer-events: auto;
+    opacity: 1 !important;
     scale: 1;
+    pointer-events: auto;
 }
 
 .entity.adulte {
@@ -920,8 +917,23 @@ button:hover {
     }
 
     .container .top .left {
+        padding: 0;
         clip-path: none;
         width: 100%;
+    }
+
+    .container .top .left .text {
+        max-width: fit-content;
+        width: min-content;
+    }
+
+    .container .top .left h1 {
+        font-size: 3.5rem;
+        width: min-content;
+    }
+
+    .container .top .left p {
+        font-size: 1.1rem;
     }
 
     .container .top .simu {
