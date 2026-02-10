@@ -7,7 +7,7 @@
 
 À travers différents scénarios (et un mode bac à sable), le projet met en scène des affrontements où le nombre, le type d’unités et les règles physiques influencent l’issue du combat.
 
-<hr>
+---
 
 ## Le projet
 
