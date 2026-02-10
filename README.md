@@ -59,6 +59,27 @@ Le projet est une **expérience visuelle** qui sert une légère **réflexion** 
 
 ## Installation locale
 
-1. Cloner le dépôt :
+Cloner le dépôt :
    ```bash
    git clone https://github.com/Lelio-Chotin/EnoughHumans.git
+```
+---
+
+## Structure du projet (simplifiée)
+ ```
+EnoughHumans/
+├── index.html
+├── style.css
+├── app.js
+├── combats.js
+├── carouselHomeMade.js
+├── sprites/
+│   └── ...
+```
+
+---
+
+### Auteur
+
+Lelio Chotin
+**https://leliochotin.fr**
