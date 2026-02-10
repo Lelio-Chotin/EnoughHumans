@@ -50,10 +50,10 @@ Le projet est une **expérience visuelle** qui sert une légère **réflexion** 
 
 ## Stack technique
 
-- HTML / CSS
-- JavaScript (vanilla)
-- SVG animés (par sprites)
-- Aucun framework, aucune dépendance externe
+- **HTML / CSS** — structure et rendu
+- **JavaScript (vanilla)** — moteur de simulation
+- **SVG animés** — entités et effets visuels
+- **Aucune dépendance externe**
 
 ---
 
