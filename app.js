@@ -6,6 +6,29 @@ let lastTime = 0, timeScale = 1, simTime = 0, isPaused = true;
 let currentZoom = 1, translateX = 0, translateY = 0, isDragging = false, startX, startY;
 let gameEnded = false;
 
+const SANDBOX_TYPES = [
+    'adulte',
+    'enfant',
+    'boxeur',
+    'gorille',
+    'batman',
+    'chien',
+    'batte'
+];
+
+const sandboxState = {
+    teamA: {},
+    teamB: {}
+};
+
+SANDBOX_TYPES.forEach(type => {
+    sandboxState.teamA[type] = 0;
+    sandboxState.teamB[type] = 0;
+});
+
+sandboxState.teamA.adulte = 5;
+sandboxState.teamB.enfant = 10;
+
 gameCanvas.style.transformOrigin = "0 0";
 
 const ResourceManager = {
@@ -118,6 +141,7 @@ class Entity {
         this.damage = stats.damage;
         this.kbForce = stats.kbForce;
         this.mass = stats.mass || 1;
+        this.role = stats.role || 'default';
         this.range = stats.range;
         this.splash = stats.splash || 0;
         this.attackCooldown = stats.cooldown;
@@ -131,6 +155,8 @@ class Entity {
         this.walkCycle = Math.random() * 100;
         this.isMoving = false;
         this.lastSpriteKey = null;
+        this.target = null;
+        this.targetRefresh = 0;
 
         this.element = document.createElement("div");
         this.element.className = `entity ${type}`;
@@ -267,6 +293,29 @@ class Entity {
             this.hpContainer.style.opacity = "0";
         }
     }
+}
+
+function spawnArmy(armyConfig, team, startX, endX, areaH) {
+    const units = [];
+
+    Object.entries(armyConfig).forEach(([type, count]) => {
+
+        for (let i = 0; i < count; i++) {
+
+            units.push(
+                new Entity(
+                    type,
+                    startX + Math.random() * (endX - startX),
+                    Math.random() * (areaH - 120),
+                    team
+                )
+            );
+
+        }
+
+    });
+
+    return units;
 }
 
 function resolveCollisions(entities) {
@@ -455,6 +504,110 @@ function startHomeDemo() {
     `;
 }
 
+function createSandboxControls() {
+
+    initSandboxSelect('A');
+    initSandboxSelect('B');
+
+    refreshSandboxTeam('A');
+    refreshSandboxTeam('B');
+
+}
+
+function initSandboxSelect(team) {
+
+    const select = document.getElementById(`team${team}Select`);
+
+    if (!select) return;
+
+    select.innerHTML = '<option value="">+ Ajouter unité</option>';
+
+    SANDBOX_TYPES.forEach(type => {
+
+        const option = document.createElement('option');
+
+        option.value = type;
+        option.innerText = type.toUpperCase();
+
+        select.appendChild(option);
+
+    });
+
+    select.addEventListener('change', () => {
+
+        const type = select.value;
+
+        if (!type) return;
+
+        sandboxState[`team${team}`][type]++;
+
+        refreshSandboxTeam(team);
+
+        if (isPaused) resetSimulation();
+
+        select.value = '';
+
+    });
+
+}
+
+function refreshSandboxTeam(team) {
+
+    const list = document.getElementById(`team${team}List`);
+
+    list.innerHTML = '';
+
+    Object.entries(sandboxState[`team${team}`]).forEach(([type, count]) => {
+
+        if (count <= 0) return;
+
+        const row = document.createElement('div');
+
+        row.className = 'sandbox-unit';
+
+        row.innerHTML = `
+            <span class="sandbox-unit-name">${type.toUpperCase()}</span>
+
+            <div class="sandbox-unit-controls">
+                <button class="minus">-</button>
+                <span>${count}</span>
+                <button class="plus">+</button>
+            </div>
+        `;
+
+        const minus = row.querySelector('.minus');
+        const plus = row.querySelector('.plus');
+
+        minus.addEventListener('click', () => {
+
+            sandboxState[`team${team}`][type]--;
+
+            if (sandboxState[`team${team}`][type] < 0) {
+                sandboxState[`team${team}`][type] = 0;
+            }
+
+            refreshSandboxTeam(team);
+
+            if (isPaused) resetSimulation();
+
+        });
+
+        plus.addEventListener('click', () => {
+
+            sandboxState[`team${team}`][type]++;
+
+            refreshSandboxTeam(team);
+
+            if (isPaused) resetSimulation();
+
+        });
+
+        list.appendChild(row);
+
+    });
+
+}
+
 function resetSimulation() {
     gameCanvas.innerHTML = '';
     teamA = [];
@@ -488,15 +641,28 @@ function resetSimulation() {
     const sandboxUI = document.getElementById('sandboxUI');
 
     if (s.isSandbox || id === 'sandbox') {
+
         sandboxUI.style.display = "flex";
         sandboxUI.classList.remove('hidden');
+
         document.getElementById('scenarioName').innerText = "Bac à Sable";
-        const typeA = document.getElementById('selectA').value || 'adulte';
-        const typeB = document.getElementById('selectB').value || 'enfant';
-        const numA = parseInt(document.getElementById('inputA').value) || 1;
-        const numB = parseInt(document.getElementById('inputB').value) || 1;
-        for (let i = 0; i < numA; i++) teamA.push(new Entity(typeA, 50 + Math.random() * 100, Math.random() * (areaH - 100), 'A'));
-        for (let i = 0; i < numB; i++) teamB.push(new Entity(typeB, areaW - 200 - Math.random() * 100, Math.random() * (areaH - 100), 'B'));
+
+        teamA = spawnArmy(
+            sandboxState.teamA,
+            'A',
+            50,
+            250,
+            areaH
+        );
+
+        teamB = spawnArmy(
+            sandboxState.teamB,
+            'B',
+            areaW - 250,
+            areaW - 50,
+            areaH
+        );
+
     } else {
         if (sandboxUI) sandboxUI.style.display = "none";
         document.getElementById('scenarioName').innerText = s.nom;
@@ -506,11 +672,114 @@ function resetSimulation() {
     [...teamA, ...teamB].forEach(e => e.draw());
 }
 
-document.querySelectorAll('#sandboxUI input, #sandboxUI select').forEach(el => {
-    el.addEventListener('change', () => {
-        if (isPaused) resetSimulation();
-    });
-});
+
+function getNearestEnemy(me, enemies) {
+
+    let nearest = null;
+    let minDist = Infinity;
+
+    for (const enemy of enemies) {
+
+        const d = Math.hypot(
+            me.center.x - enemy.center.x,
+            me.center.y - enemy.center.y
+        );
+
+        if (d < minDist) {
+            minDist = d;
+            nearest = enemy;
+        }
+
+    }
+
+    return nearest;
+}
+
+function getWeakestEnemy(me, enemies) {
+
+    let weakest = null;
+    let minHp = Infinity;
+
+    for (const enemy of enemies) {
+
+        if (enemy.hp < minHp) {
+            minHp = enemy.hp;
+            weakest = enemy;
+        }
+
+    }
+
+    return weakest;
+}
+
+function getTankEnemy(me, enemies) {
+
+    let biggest = null;
+    let maxMass = -1;
+
+    for (const enemy of enemies) {
+
+        if (enemy.mass > maxMass) {
+            maxMass = enemy.mass;
+            biggest = enemy;
+        }
+
+    }
+
+    return biggest;
+}
+
+function chooseTarget(me, enemies) {
+
+    if (
+        me.target &&
+        !me.target.isDying &&
+        enemies.includes(me.target) &&
+        simTime < me.targetRefresh
+    ) {
+        return me.target;
+    }
+
+    let newTarget = null;
+
+    switch (me.role) {
+
+        case 'hunter':
+            newTarget = getWeakestEnemy(me, enemies);
+            break;
+
+        case 'aggressive':
+            newTarget = getNearestEnemy(me, enemies);
+            break;
+
+        case 'berserk':
+            newTarget = enemies[Math.floor(Math.random() * enemies.length)];
+            break;
+
+        case 'tank':
+            newTarget = getNearestEnemy(me, enemies);
+            break;
+
+        case 'fast':
+            newTarget = getWeakestEnemy(me, enemies);
+            break;
+
+        case 'swarm':
+            newTarget = getTankEnemy(me, enemies);
+            break;
+
+        default:
+            newTarget = getNearestEnemy(me, enemies);
+            break;
+
+    }
+
+    me.target = newTarget;
+
+    me.targetRefresh = simTime + 800;
+
+    return newTarget;
+}
 
 function updateLogic(curr, enemy, dt) {
     const areaW = gameArea.clientWidth;
@@ -532,22 +801,48 @@ function updateLogic(curr, enemy, dt) {
         const isStunned = knockbackSpeed > 2.0;
 
         if (!isStunned && alive.length > 0) {
-            let target = alive[0], minDist = Math.hypot(m.center.x - target.center.x, m.center.y - target.center.y);
-            for (let e of alive) {
-                let d = Math.hypot(m.center.x - e.center.x, m.center.y - e.center.y);
-                if (d < minDist) {
-                    minDist = d;
-                    target = e;
-                }
-            }
+            const target = chooseTarget(m, alive);
+
+            if (!target) continue;
+
+            const minDist = Math.hypot(
+                m.center.x - target.center.x,
+                m.center.y - target.center.y
+            );
             const dx = (target.center.x - m.center.x) || 0.01, dy = (target.center.y - m.center.y) || 0.01;
 
             if (knockbackSpeed < 1.0) {
-                if (minDist > m.range * 0.7) {
+                let desiredDistance = m.range * 0.7;
+
+                switch (m.role) {
+
+                    case 'tank':
+                        desiredDistance = m.range * 0.9;
+                        break;
+
+                    case 'fast':
+                        desiredDistance = m.range * 0.5;
+                        break;
+
+                    case 'hunter':
+                        desiredDistance = m.range * 0.4;
+                        break;
+
+                    case 'swarm':
+                        desiredDistance = m.range * 0.2;
+                        break;
+
+                    case 'berserk':
+                        desiredDistance = 0;
+                        break;
+
+                }
+
+                if (minDist > desiredDistance) {
                     const speedMult = m.speed * dt;
                     m.x += (dx / minDist) * speedMult;
                     m.y += (dy / minDist) * speedMult;
-                    m.facing = dx > 0 ? 1 : -1;
+                    if (Math.abs(dx) > 15) m.facing = dx > 0 ? 1 : -1;
                     m.isMoving = true;
                     m.walkCycle += dt * (m.speed / 100) * 0.75;
                 } else m.isMoving = false;
@@ -641,13 +936,7 @@ function loop(t) {
     requestAnimationFrame(loop);
 }
 
-const selA = document.getElementById('selectA'), selB = document.getElementById('selectB');
-if (selA && selB && typeof CHAR_TYPES !== 'undefined') {
-    Object.keys(CHAR_TYPES).forEach(k => {
-        selA.add(new Option(k.toUpperCase(), k));
-        selB.add(new Option(k.toUpperCase(), k));
-    });
-}
+
 
 window.addEventListener('load', () => {
     ResourceManager.init().then(() => {
@@ -656,6 +945,7 @@ window.addEventListener('load', () => {
             document.getElementById('homeView').style.display = 'none';
             document.getElementById('simuView').style.display = 'block';
             resetSimulation();
+            createSandboxControls();
         } else {
             document.getElementById('homeView').style.display = 'block';
             document.getElementById('simuView').style.display = 'none';

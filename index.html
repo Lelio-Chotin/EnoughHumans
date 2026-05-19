@@ -62,16 +62,25 @@
     <div class="ui" id="ui">
         <button onclick="window.location.href='index.html'" class="btn-back">←</button>
         <h2 id="scenarioName">Simulateur</h2>
-        <div id="sandboxUI" style="display:none;">
-            <div class="control-group">
-                <label>Team A</label>
-                <select id="selectA"></select>
-                <input type="number" id="inputA" value="1">
+        <div id="sandboxUI" class="hidden">
+            <div class="sandbox-team">
+                <div class="sandbox-team-header">
+                    <h2>TEAM A</h2>
+                    <select id="teamASelect" class="unit-select">
+                        <option value="">+ Ajouter unité</option>
+                    </select>
+                </div>
+                <div id="teamAList" class="team-list"></div>
             </div>
-            <div class="control-group">
-                <label>Team B</label>
-                <select id="selectB"></select>
-                <input type="number" id="inputB" value="10">
+
+            <div class="sandbox-team">
+                <div class="sandbox-team-header">
+                    <h2>TEAM B</h2>
+                    <select id="teamBSelect" class="unit-select">
+                        <option value="">+ Ajouter unité</option>
+                    </select>
+                </div>
+                <div id="teamBList" class="team-list"></div>
             </div>
         </div>
         <div class="controls-bottom-left">
