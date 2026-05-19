@@ -7,8 +7,6 @@ let currentZoom = 1, translateX = 0, translateY = 0, isDragging = false, startX,
 let gameEnded = false;
 
 
-
-
 const bootScreen = document.getElementById('bootScreen');
 const bootBarFill = document.querySelector('.bootBarFill');
 const bootPercent = document.querySelector('.bootPercent');
@@ -127,10 +125,6 @@ function runBootSequence(realLoadingPromise) {
     });
 
 }
-
-
-
-
 
 
 const SANDBOX_TYPES = [
@@ -632,109 +626,175 @@ function startHomeDemo() {
     `;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let selectedSandboxTeam = 'A';
+let selectedSandboxType = null;
+
 function createSandboxControls() {
 
-    initSandboxSelect('A');
-    initSandboxSelect('B');
+    const unitsContainer = document.getElementById('sandboxUnits');
+    const teamButtons = document.querySelectorAll('.team-picker');
 
-    refreshSandboxTeam('A');
-    refreshSandboxTeam('B');
+    teamButtons.forEach(button => {
 
-}
+        button.addEventListener('click', () => {
 
-function initSandboxSelect(team) {
+            teamButtons.forEach(btn =>
+                btn.classList.remove('active')
+            );
 
-    const select = document.getElementById(`team${team}Select`);
+            button.classList.add('active');
 
-    if (!select) return;
+            selectedSandboxTeam =
+                button.dataset.team;
 
-    select.innerHTML = '<option value="">+ Ajouter unité</option>';
+        });
+
+    });
+
+    unitsContainer.innerHTML = '';
 
     SANDBOX_TYPES.forEach(type => {
 
-        const option = document.createElement('option');
+        const card = document.createElement('button');
 
-        option.value = type;
-        option.innerText = type.toUpperCase();
+        card.className = 'sandbox-unit-card';
 
-        select.appendChild(option);
-
-    });
-
-    select.addEventListener('change', () => {
-
-        const type = select.value;
-
-        if (!type) return;
-
-        sandboxState[`team${team}`][type]++;
-
-        refreshSandboxTeam(team);
-
-        if (isPaused) resetSimulation();
-
-        select.value = '';
-
-    });
-
-}
-
-function refreshSandboxTeam(team) {
-
-    const list = document.getElementById(`team${team}List`);
-
-    list.innerHTML = '';
-
-    Object.entries(sandboxState[`team${team}`]).forEach(([type, count]) => {
-
-        if (count <= 0) return;
-
-        const row = document.createElement('div');
-
-        row.className = 'sandbox-unit';
-
-        row.innerHTML = `
-            <span class="sandbox-unit-name">${type.toUpperCase()}</span>
-
-            <div class="sandbox-unit-controls">
-                <button class="minus">-</button>
-                <span>${count}</span>
-                <button class="plus">+</button>
-            </div>
+        card.innerHTML = `
+            <img src="./sprites/${type}/idle.svg">
+            <span class="sandbox-unit-count">0</span>
         `;
 
-        const minus = row.querySelector('.minus');
-        const plus = row.querySelector('.plus');
+        card.addEventListener('click', () => {
 
-        minus.addEventListener('click', () => {
+            document
+                .querySelectorAll('.sandbox-unit-card')
+                .forEach(el =>
+                    el.classList.remove('active')
+                );
 
-            sandboxState[`team${team}`][type]--;
+            card.classList.add('active');
 
-            if (sandboxState[`team${team}`][type] < 0) {
-                sandboxState[`team${team}`][type] = 0;
-            }
-
-            refreshSandboxTeam(team);
-
-            if (isPaused) resetSimulation();
+            selectedSandboxType = type;
 
         });
 
-        plus.addEventListener('click', () => {
+        unitsContainer.appendChild(card);
 
-            sandboxState[`team${team}`][type]++;
+    });
 
-            refreshSandboxTeam(team);
+    gameArea.addEventListener('click', sandboxPlaceUnit);
 
-            if (isPaused) resetSimulation();
+    updateSandboxCounts();
 
-        });
+}
 
-        list.appendChild(row);
+function sandboxPlaceUnit(e) {
+
+    const urlParams =
+        new URLSearchParams(window.location.search);
+
+    if (urlParams.get('combat') !== 'sandbox') {
+        return;
+    }
+
+    if (!selectedSandboxType) {
+        return;
+    }
+
+    if (e.target.closest('#sandboxUI')) {
+        return;
+    }
+
+    const rect = gameArea.getBoundingClientRect();
+
+    const x =
+        (e.clientX - rect.left - translateX)
+        / currentZoom;
+
+    const y =
+        (e.clientY - rect.top - translateY)
+        / currentZoom;
+
+    const entity = new Entity(
+        selectedSandboxType,
+        x,
+        y,
+        selectedSandboxTeam
+    );
+
+    if (selectedSandboxTeam === 'A') {
+
+        teamA.push(entity);
+
+        sandboxState.teamA[selectedSandboxType]++;
+
+    } else {
+
+        teamB.push(entity);
+
+        sandboxState.teamB[selectedSandboxType]++;
+
+    }
+
+    entity.draw();
+
+    updateSandboxCounts();
+
+}
+
+
+function updateSandboxCounts() {
+
+    const cards =
+        document.querySelectorAll('.sandbox-unit-card');
+
+    cards.forEach((card, index) => {
+
+        const type = SANDBOX_TYPES[index];
+
+        const total =
+            sandboxState.teamA[type]
+            + sandboxState.teamB[type];
+
+        const counter =
+            card.querySelector('.sandbox-unit-count');
+
+        counter.innerText = total;
 
     });
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function resetSimulation() {
     gameCanvas.innerHTML = '';
@@ -768,6 +828,11 @@ function resetSimulation() {
     const areaH = gameArea.clientHeight;
     const sandboxUI = document.getElementById('sandboxUI');
 
+    Object.keys(sandboxState.teamA).forEach(type => {
+        sandboxState.teamA[type] = 0;
+        sandboxState.teamB[type] = 0;
+    });
+
     if (s.isSandbox || id === 'sandbox') {
 
         sandboxUI.style.display = "flex";
@@ -775,21 +840,8 @@ function resetSimulation() {
 
         document.getElementById('scenarioName').innerText = "Bac à Sable";
 
-        teamA = spawnArmy(
-            sandboxState.teamA,
-            'A',
-            50,
-            250,
-            areaH
-        );
-
-        teamB = spawnArmy(
-            sandboxState.teamB,
-            'B',
-            areaW - 250,
-            areaW - 50,
-            areaH
-        );
+        teamA = [];
+        teamB = [];
 
     } else {
         if (sandboxUI) sandboxUI.style.display = "none";
@@ -1063,7 +1115,6 @@ function loop(t) {
     if (countB) countB.innerText = teamB.filter(e => !e.isDying).length;
     requestAnimationFrame(loop);
 }
-
 
 
 window.addEventListener('load', async () => {
