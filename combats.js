@@ -1,12 +1,123 @@
 const CHAR_TYPES = {
-    adulte: { w: 75, h: 85, hp: 1100, speed: 115, damage: 30, cooldown: 600, color: 'transparent', kbForce: 20, range: 75, splash: 0, mass: 3 },
-    enfant: { w: 50, h: 50, hp: 65, speed: 95, damage: 4, cooldown: 1100, color: 'transparent', kbForce: 2, range: 50, splash: 0, mass: 1 },
-    chien: { w: 70, h: 60, hp: 320, speed: 155, damage: 18, cooldown: 500, color: 'transparent', kbForce: 28, range: 60, splash: 0, mass: 1.5 },
-    gorille: { w: 175, h: 150, hp: 6500, speed: 85, damage: 190, cooldown: 1400, color: 'transparent', kbForce: 80, range: 100, splash: 90, mass: 12 },
-    oie: { w: 175, h: 130, hp: 2500, speed: 280, damage: 120, cooldown: 250, color: 'transparent', kbForce: 95, range: 140, splash: 80, mass: 0.8 },
-    boxeur: { w: 75, h: 85, hp: 1600, speed: 140, damage: 95, cooldown: 420, color: 'transparent', kbForce: 55, range: 80, splash: 0, mass: 3.5 },
-    batte: { w: 110, h: 85, hp: 1300, speed: 110, damage: 65, cooldown: 550, color: 'transparent', kbForce: 70, range: 85, splash: 20, mass: 3 },
-    batman: { w: 90, h: 90, hp: 2200, speed: 150, damage: 130, cooldown: 480, color: 'transparent', kbForce: 65, range: 80, splash: 40, mass: 4 }
+    adulte: {
+        w: 75,
+        h: 85,
+        hp: 1100,
+        speed: 115,
+        damage: 30,
+        cooldown: 600,
+        color: 'transparent',
+        kbForce: 20,
+        range: 75,
+        splash: 0,
+        mass: 3,
+        role: 'fast'
+    },
+
+    enfant: {
+        w: 50,
+        h: 50,
+        hp: 65,
+        speed: 95,
+        damage: 4,
+        cooldown: 1100,
+        color: 'transparent',
+        kbForce: 2,
+        range: 50,
+        splash: 0,
+        mass: 1,
+        role: 'swarm'
+    },
+
+    chien: {
+        w: 70,
+        h: 60,
+        hp: 320,
+        speed: 155,
+        damage: 18,
+        cooldown: 500,
+        color: 'transparent',
+        kbForce: 28,
+        range: 60,
+        splash: 0,
+        mass: 1.5,
+        role: 'tank'
+    },
+
+    gorille: {
+        w: 175,
+        h: 150,
+        hp: 6500,
+        speed: 85,
+        damage: 190,
+        cooldown: 1400,
+        color: 'transparent',
+        kbForce: 80,
+        range: 100,
+        splash: 90,
+        mass: 12,
+        role: 'berserk'
+    },
+
+    oie: {
+        w: 175,
+        h: 130,
+        hp: 2500,
+        speed: 280,
+        damage: 120,
+        cooldown: 250,
+        color: 'transparent',
+        kbForce: 95,
+        range: 140,
+        splash: 80,
+        mass: 0.8,
+        role: 'fast'
+    },
+
+    boxeur: {
+        w: 75,
+        h: 85,
+        hp: 1600,
+        speed: 140,
+        damage: 95,
+        cooldown: 420,
+        color: 'transparent',
+        kbForce: 55,
+        range: 80,
+        splash: 0,
+        mass: 3.5,
+        role: 'aggressive'
+    },
+
+    batte: {
+        w: 110,
+        h: 85,
+        hp: 1300,
+        speed: 110,
+        damage: 65,
+        cooldown: 550,
+        color: 'transparent',
+        kbForce: 70,
+        range: 85,
+        splash: 20,
+        mass: 3,
+        role: 'tank'
+    },
+
+    batman: {
+        w: 90,
+        h: 90,
+        hp: 4500,
+        speed: 150,
+        damage: 200,
+        cooldown: 480,
+        color: 'transparent',
+        kbForce: 65,
+        range: 100,
+        splash: 40,
+        mass: 4,
+        role: 'hunter'
+    }
 };
 
 
@@ -18,8 +129,8 @@ Sur le papier, la supériorité numérique est écrasante. Pourtant, les statist
 Dans ce duel, les enfants compensent leur très faible puissance par leur nombre, mais leur faible portée, leurs dégâts insignifiants et leur knockback quasi nul rendent chaque attaque inefficace individuellement.
 Ce scénario illustre un principe clé des conflits asymétriques : tant que la masse ne parvient pas à neutraliser la mobilité et la capacité de frappe centrale, le nombre seul ne suffit pas.
         `,
-        teamA: { type: "adulte", count: 1 },
-        teamB: { type: "enfant", count: 25 }
+        teamA: {type: "adulte", count: 1},
+        teamB: {type: "enfant", count: 25}
     },
 
     "2": {
@@ -29,8 +140,8 @@ Les chiens compensent leur gabarit plus modeste par une vitesse élevée, un exc
 Dans la réalité comme dans cette simulation, une meute coordonnée est capable de désorienter une cible humaine en multipliant les angles d’attaque.
 Ce duel met en évidence l’impact de la vitesse et de la pression constante : même sans dégâts massifs, empêcher l’adversaire de respirer est souvent plus efficace qu’un coup puissant isolé.
         `,
-        teamA: { type: "adulte", count: 3 },
-        teamB: { type: "chien", count: 5 }
+        teamA: {type: "adulte", count: 3},
+        teamB: {type: "chien", count: 5}
     },
 
     "3": {
@@ -40,8 +151,8 @@ Le gorille est une anomalie statistique. Sa force brute dépasse celle de plusie
 Dans ce scénario, les humains ne peuvent espérer gagner que par saturation : encercler, temporiser, exploiter les temps de récupération.
 Ce duel démontre une réalité biomécanique bien documentée : face à une créature disposant d’une force et d’une masse extrêmes, la coordination est plus importante que le courage individuel.
         `,
-        teamA: { type: "gorille", count: 1 },
-        teamB: { type: "adulte", count: 15 }
+        teamA: {type: "gorille", count: 1},
+        teamB: {type: "adulte", count: 15}
     },
 
     "4": {
@@ -51,8 +162,8 @@ Une arme contondante modifie radicalement l’équilibre d’un affrontement. La
 Historiquement, l’accès à une arme simple multiplie l’efficacité d’un combattant, même sans formation poussée.
 Ce duel illustre l’avantage mécanique pur : à compétences égales, l’outil prolonge le corps et transforme chaque contact en menace sérieuse.
         `,
-        teamA: { type: "batte", count: 1 },
-        teamB: { type: "adulte", count: 4 }
+        teamA: {type: "batte", count: 1},
+        teamB: {type: "adulte", count: 4}
     },
 
     "5": {
@@ -62,8 +173,8 @@ Souvent sous-estimée, l’oie combine agressivité territoriale, vitesse élev�
 Des études comportementales montrent que les oies provoquent souvent une réponse de panique disproportionnée chez l’humain.
 Dans ce scénario, la mobilité extrême et les dégâts en zone de l’oie illustrent comment un adversaire chaotique peut briser une formation pourtant numériquement supérieure.
         `,
-        teamA: { type: "oie", count: 1 },
-        teamB: { type: "adulte", count: 5 }
+        teamA: {type: "oie", count: 1},
+        teamB: {type: "adulte", count: 5}
     },
 
     "6": {
@@ -73,8 +184,8 @@ Un boxeur entraîné dispose d’une puissance de frappe, d’une vitesse d’ex
 Cependant, l’endurance et la technique montrent leurs limites face à des attaques simultanées.
 Ce duel met en lumière une constante des sports de combat réels : la spécialisation est redoutable en duel, mais vulnérable face au surnombre non coordonné.
         `,
-        teamA: { type: "boxeur", count: 1 },
-        teamB: { type: "adulte", count: 5 }
+        teamA: {type: "boxeur", count: 1},
+        teamB: {type: "adulte", count: 5}
     },
 
     "7": {
@@ -84,8 +195,8 @@ Batman n’est pas une force brute exceptionnelle, mais une combinaison optimale
 Inspiré des principes de combat urbain et de domination psychologique, ce duel repose sur la capacité à frapper vite, fort, et à désorganiser l’adversaire.
 Il illustre un principe fondamental des affrontements modernes : l’avantage technologique et tactique peut compenser un désavantage numérique significatif.
         `,
-        teamA: { type: "batman", count: 1 },
-        teamB: { type: "adulte", count: 6 }
+        teamA: {type: "batman", count: 1},
+        teamB: {type: "adulte", count: 6}
     },
 
     "sandbox": {

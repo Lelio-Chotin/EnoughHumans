@@ -731,61 +731,6 @@ button:hover {
     font-size: 10px;
 }
 
-#sandboxUI {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(29, 30, 32, 0.85);
-    backdrop-filter: blur(10px);
-    padding: 2.5rem;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    gap: 2rem;
-    z-index: 1005;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-#sandboxUI.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -45%);
-}
-
-#sandboxUI .control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    margin-bottom: 0;
-}
-
-#sandboxUI label {
-    font-weight: 900;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    color: var(--main);
-}
-
-#sandboxUI select,
-#sandboxUI input {
-    background: var(--light-black);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 12px;
-    font-family: 'satoshi', sans-serif;
-    font-weight: bold;
-    border-radius: 8px;
-    width: 180px;
-    outline: none;
-}
-
-#sandboxUI input:focus,
-#sandboxUI select:focus {
-    border-color: var(--main);
-}
-
 .shockwave {
     position: absolute;
     border-radius: 50%;
@@ -868,6 +813,178 @@ button:hover {
 .yoyo-delay-3 {
     animation: yoyo-move 5s ease-in-out infinite 0.2s;
 }
+
+
+#sandboxUI {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(620px, calc(100% - 40px));
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 2000;
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+#sandboxUI.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -46%);
+}
+
+.sandbox-team {
+    flex: 1;
+    min-width: 0;
+    background: rgba(21, 23, 25, 0.88);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.sandbox-team-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.sandbox-team-header h2 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: white;
+}
+
+.unit-select {
+    width: 100%;
+    height: 38px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    color: white;
+    padding: 0 12px;
+    font-family: 'satoshi', sans-serif;
+    font-weight: 700;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: border .2s ease, background .2s ease;
+}
+
+.unit-select:hover {
+    background: rgba(255,255,255,0.06);
+}
+
+.unit-select:focus {
+    border-color: var(--main);
+}
+
+.unit-select option {
+    background: #151719;
+    color: white;
+    border: none;
+}
+
+.team-list {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 8px;
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.team-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.team-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+}
+
+.sandbox-unit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 0 10px;
+}
+
+.sandbox-unit-name {
+    color: white;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.sandbox-unit-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sandbox-unit-controls span {
+    width: 20px;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sandbox-unit-controls button {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background .2s ease, transform .15s ease;
+}
+
+.sandbox-unit-controls button:hover {
+    background: var(--main);
+}
+
+.sandbox-unit-controls button:active {
+    transform: scale(0.92);
+}
+
+@media (max-width: 768px) {
+
+    #sandboxUI {
+        width: calc(100% - 20px);
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sandbox-team {
+        width: 100%;
+    }
+
+    .team-list {
+        max-height: 220px;
+    }
+
+}
+
 
 @keyframes shake {
     10%,
@@ -1097,4 +1214,224 @@ button:hover {
         justify-content: center;
         align-items: center;
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#bootScreen {
+    position: fixed;
+    inset: 0;
+
+    z-index: 999999;
+
+    background:
+            linear-gradient(
+                    180deg,
+                    #17191c 0%,
+                    #111214 100%
+            );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    transition:
+            opacity .4s ease;
+}
+
+#bootScreen::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+            radial-gradient(
+                    rgba(255,255,255,.025) 1px,
+                    transparent 1px
+            );
+
+    background-size: 22px 22px;
+
+    opacity: .45;
+}
+
+.bootContent {
+    position: relative;
+    z-index: 2;
+
+    width: min(1300px, 90vw);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2rem;
+}
+
+.bootTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+}
+
+.bootSprite {
+    flex-shrink: 0;
+
+    width: 340px;
+    height: 340px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.bootSprite::before {
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    border-radius: 50%;
+
+    background:
+            radial-gradient(
+                    rgba(255,255,255,.06),
+                    transparent 70%
+            );
+}
+
+.bootSpriteImg {
+    height: 80%;
+    width: auto;
+    object-fit: contain;
+    image-rendering: pixelated;
+    opacity: .92;
+    filter: drop-shadow(0 0 25px rgba(0,0,0,.35));
+}
+
+.bootTitle {
+    font-size: clamp(5rem, 15vw, 13rem);
+
+    line-height: 82%;
+
+    font-weight: 900;
+
+    letter-spacing: -0.08em;
+
+    text-transform: uppercase;
+
+    color: #f5f5f5;
+}
+
+.bootTitle span {
+    color: var(--main);
+}
+
+.bootBar {
+    width: 100%;
+
+    height: 5px;
+
+    background: rgba(255,255,255,.08);
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+.bootBarFill {
+    width: 0%;
+
+    height: 100%;
+
+    background:
+            linear-gradient(
+                    90deg,
+                    var(--main),
+                    #ff7b5c
+            );
+
+    transition: width .12s linear;
+}
+
+.bootPercent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    color: rgba(255,255,255,.45);
+
+    font-size: .78rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: .18em;
+}
+
+.bootPercent::before {
+    content: "Initializing simulation";
+}
+
+#bootScreen.hide {
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+@media (max-width: 900px) {
+
+    .bootTop {
+        display: block;
+    }
+
+    .bootSprite {
+        display: none;
+    }
+
+    .bootContent {
+        width: 92vw;
+    }
+
+    .bootTitle {
+        width: 100%;
+        font-size: 21vw;
+        line-height: 80%;
+        word-break: keep-all;
+    }
+
+    .bootBar {
+        width: 100%;
+    }
+
 }

@@ -29,23 +29,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function snapToIndex() {
-            if (items.length === 0) return;
-            const itemWidth = items[0].getBoundingClientRect().width;
-            const gap = parseInt(window.getComputedStyle(carousel).gap) || 0;
-            let target = -(currentIndex * (itemWidth + gap));
+            const item = items[currentIndex];
+
+            if (!item) return;
+
+            const itemLeft = item.offsetLeft;
+            let target = -itemLeft;
+
+            if (target < maxTranslate) {
+                target = maxTranslate;
+            }
 
             if (target > 0) {
                 target = 0;
-                currentIndex = 0;
-            } else if (target < maxTranslate) {
-                target = maxTranslate;
-                currentIndex = Math.round(Math.abs(maxTranslate) / (itemWidth + gap));
             }
 
             currentTranslate = target;
-            prevTranslate = currentTranslate;
-            carousel.style.transition = "transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1)";
-            carousel.style.transform = `translateX(${currentTranslate}px)`;
+            prevTranslate = target;
+
+            carousel.style.transition = "transform 0.35s cubic-bezier(0.215, 0.61, 0.355, 1)";
+
+            carousel.style.transform = `translate3d(${target}px,0,0)`;
         }
 
         function dragMove(x) {
@@ -60,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentTranslate = maxTranslate + (currentTranslate - maxTranslate) * 0.2;
             }
 
-            carousel.style.transform = `translateX(${currentTranslate}px)`;
+            carousel.style.transform = `translate3d(${currentTranslate}px,0,0)`;
         }
 
         function dragEnd() {
@@ -68,13 +72,27 @@ document.addEventListener("DOMContentLoaded", () => {
             isDragging = false;
             carousel.classList.remove("dragging");
 
-            setTimeout(() => { dragDistance = 0; }, 50);
+            setTimeout(() => {
+                dragDistance = 0;
+            }, 50);
 
-            const itemWidth = items[0].getBoundingClientRect().width;
-            const gap = parseInt(window.getComputedStyle(carousel).gap) || 0;
-            const step = itemWidth + gap;
+            const parentRect =carousel.parentElement.getBoundingClientRect();
 
-            currentIndex = Math.round(Math.abs(currentTranslate) / step);
+            let closestIndex = 0;
+            let closestDistance = Infinity;
+
+            items.forEach((item, index) => {
+                const itemRect = item.getBoundingClientRect();
+                const distance = Math.abs(itemRect.left - parentRect.left);
+
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestIndex = index;
+                }
+            });
+
+            currentIndex = closestIndex;
+
             snapToIndex();
         }
 
